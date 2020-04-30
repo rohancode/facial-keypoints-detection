@@ -79,6 +79,12 @@ def correct_pts(x):
     return x
 
 
+def correction(x):
+    x = [1.0 if p > 1.0 else p for p in x]
+    x = [0.0 if p < 0.0 else p for p in x]
+    return x
+
+
 def combine_list(l1, l2):
     assert len(l1) == len(l2), print('List dont have equal length')
     l = np.empty(len(l1)*2)

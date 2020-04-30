@@ -3,56 +3,88 @@ import os
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras import optimizers
+from tensorflow.keras.callbacks import LearningRateScheduler, EarlyStopping
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+
 from generator import DataGenerator
-from model import MobileNet
-from utils import combine_list, load_img
+from model import KeypointModel
+from utils import combine_list, correction
 
 seed = 42
 np.random.seed(seed)
-tf.random.set_seed(seed)
+tf.random.set_random_seed(seed)
 
 PATH = "./data"
 TRAIN_CSV = "train.csv"
 TEST_CSV = "test.csv"
+TRAIN_FOLDER = "train_images"
+TEST_FOLDER = "test_images"
+
 WEIGHT_FILENAME = "face_keypoint_mobile.h5"
 INPUT_SIZE = 128
+BATCH_SIZE = 64
 
 
-def str2int(df):
+def str_to_list(df):
     df.pts_x = df.pts_x.apply(lambda x: ast.literal_eval(x))
     df.pts_y = df.pts_y.apply(lambda x: ast.literal_eval(x))
     return df
 
 
-def main():
+def train():
 
-    train_df = pd.read_csv(os.path.join(PATH, TEST_CSV))
-    test_df = pd.read_csv(os.path.join(PATH, TRAIN_CSV))
+    # Reading train and test csv file
+    train_df = pd.read_csv(os.path.join(PATH, TRAIN_CSV))
+    test_df = pd.read_csv(os.path.join(PATH, TEST_CSV))
+
+    train_df, test_df = str_to_list(train_df), str_to_list(test_df)
+
+    train_df.pts = train_df.apply(
+        lambda x: combine_list(x.pts_x, x.pts_y), axis=1)
+    test_df.pts = test_df.apply(
+        lambda x: combine_list(x.pts_x, x.pts_y), axis=1)
+
+    train_df.pts = train_df.pts.apply(lambda x: correction(x))
+    test_df.pts = test_df.pts.apply(lambda x: correction(x))
 
     print(f"train shape : {train_df.shape} and test shape : {test_df.shape}")
 
-    train_df, test_df = str2int(train_df), str2int(train_df)
+    train_generator = DataGenerator(train_df,
+                                    BATCH_SIZE,
+                                    path=os.path.join(PATH, TRAIN_FOLDER),
+                                    is_valid=False)
 
-    train_generator = DataGenerator(train_data, 64, False)
-    valid_generator = DataGenerator(test_data, 64, True)
+    test_generator = DataGenerator(test_df,
+                                   BATCH_SIZE*2,
+                                   path=os.path.join(PATH, TRAIN_FOLDER),
+                                   is_valid=True)
 
-    model = MobileNet()
+    # Initialize  Model
+    print("Loading Model ...")
+    model = KeypointModel()
+    print(model.summary(110))
 
     learning_rate = 0.001
-    adam = k.optimizers.Adam(lr=learning_rate)
+    adam = optimizers.Adam(lr=learning_rate)
     model.compile(optimizer=adam, loss='mae', metrics=['mse'])
 
-    cbks = callbacks.ModelCheckpoint(f"./weights/{WEIGHT_FILENAME}", monitor='val_loss', verbose=1,
-                                        save_best_only=True, mode='min'),
-            callbacks.ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1,
-                                          mode='min', min_delta=0.0001, min_lr=1e-5),
-            callbacks.EarlyStopping(monitor='val_loss', patience=5, verbose=1,
-                                            mode='min', baseline=None, restore_best_weights=False)]
+    cbks = [ModelCheckpoint(f"./weights/{WEIGHT_FILENAME}", monitor='val_loss', verbose=1,
+                            save_best_only=True, mode='min'),
+            ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1,
+                              mode='min', min_delta=0.0001, min_lr=1e-5),
+            EarlyStopping(monitor='val_loss', patience=5, verbose=1,
+                          restore_best_weights=False)]
 
     model.fit_generator(
-        generator = train_generator,
-        steps_per_epoch = np.ceil(float(train_df.shape[0]) / float(bs)),
-        epochs = ep, verbose = 1,
-        callbacks = cbks,
-        validation_data = valid_generator,
-        validation_steps = np.ceil(float(valid_df.shape[0]) / float(bs)))
+        generator=train_generator,
+        steps_per_epoch=np.ceil(float(train_df.shape[0]) / float(BATCH_SIZE)),
+        epochs=50,
+        verbose=1,
+        callbacks=cbks,
+        validation_data=test_generator,
+        validation_steps=np.ceil(float(test_df.shape[0]) / float(BATCH_SIZE)))
+
+
+if __name__ == "__main__":
+    train()
