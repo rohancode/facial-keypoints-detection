@@ -1,0 +1,10 @@
+tensorflow-gpu==1.14
+matplotlib
+Markdown==2.6.11
+numpy==1.18.2
+opencv_python
+Pillow
+six==1.11.0
+joblib==0.14.1
+pandas==1.0.3
+albumentations==0.4.5
