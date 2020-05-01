@@ -114,7 +114,8 @@ outputs/*.jpg
 *.log
 
 #data
-/data
+/data/*
 /misc
 
+!/data/README.md
 *.ipynb
