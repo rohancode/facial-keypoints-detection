@@ -118,4 +118,3 @@ outputs/*.jpg
 /misc
 
 !/data/README.md
-*.ipynb
