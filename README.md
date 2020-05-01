@@ -1,8 +1,8 @@
-# face-keypoint
+# face-keypoints-detection
 
 ## Introduction
 
-Real time face keypoint detection on mobile gpus. Face keypoint detection is used in many applications like applying makeup, 
+Real time face keypoints detection for mobile devices using tflite on mobile gpus. Face keypoints detection is used in many applications like applying makeup, 
 instagram filters etc.Generally face keypoint or body keypoint detection are solved using hourglass or 
 encoder-decoder CNN architectures, but those architectures large and slow for edge cases.
 So I am trying to solve this problem by treating it as a regression problem on an open source dataset 
