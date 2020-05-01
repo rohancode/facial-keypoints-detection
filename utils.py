@@ -1,4 +1,3 @@
-import warnings
 import cv2
 import os
 import numpy as np
@@ -8,10 +7,6 @@ import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 
 np.random.seed(42)
-
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore")
-    warnings.warn("deprecated", DeprecationWarning)
 
 
 def plot_keypoint_df(df, path, size=128):
@@ -42,45 +37,6 @@ def plot_keypoint_img(images, labels, name=None):
             ax.add_patch(cir)
     if name is not None:
         fig.savefig(name)
-
-
-def plot_sample_img(data, dic, from_=0, to=16, figsize=(9, 6), n_i=4, n_j=4):
-    ims = [open_image(data.id[i]) for i in range(from_, to)]
-    label = [data.label[i] for i in range(from_, to)]
-    fig, axes = plt.subplots(n_i, n_j, figsize=figsize)
-    for i, ax in enumerate(axes.flat):
-        display_img(ims[i], dic=dic, ax=ax, label=label[i])
-    plt.tight_layout(pad=0.1)
-
-
-def display_img(im, dic, prediction=None, figsize=None, ax=None, alpha=None, label=0, pred=False):
-    if not ax:
-        fig, ax = plt.subplots(figsize=figsize)
-    ax.imshow(im, alpha=alpha)
-    if pred:
-        ax.text(1, 10, 'pred: %s (%.2f)' % (dic[np.argmax(prediction)], np.max(prediction)),
-                color='w', backgroundcolor='k', alpha=0.8)
-    ax.text(1, 30, '%s' % dic[label], color='k',
-            backgroundcolor='w', alpha=0.8)
-    ax.set_axis_off()
-    return ax
-
-
-def open_image(fn):
-
-    flags = cv2.IMREAD_UNCHANGED+cv2.IMREAD_ANYDEPTH+cv2.IMREAD_ANYCOLOR
-    if not os.path.exists(fn):
-        raise OSError('No such file or directory: {}'.format(fn))
-    elif os.path.isdir(fn):
-        raise OSError('Is a directory: {}'.format(fn))
-    else:
-        try:
-            im = cv2.imread(str(fn), flags).astype(np.float32)/255
-            if im is None:
-                raise OSError('File not recognized by opencv: %d', fn)
-            return cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
-        except Exception as e:
-            raise OSError('Error handling image at: {}'.format(fn)) from e
 
 
 # def correct_pts(x):

@@ -1,3 +1,4 @@
+import warnings
 import ast
 import os
 import pandas as pd
@@ -10,6 +11,10 @@ from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 from generator import DataGenerator
 from model import KeypointModel
 from utils import combine_list, correction
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    warnings.warn("deprecated", DeprecationWarning)
 
 seed = 42
 np.random.seed(seed)
