@@ -40,9 +40,9 @@ def train():
 
     train_df, test_df = str_to_list(train_df), str_to_list(test_df)
 
-    train_df.pts = train_df.apply(
+    train_df['pts'] = train_df.apply(
         lambda x: combine_list(x.pts_x, x.pts_y), axis=1)
-    test_df.pts = test_df.apply(
+    test_df['pts'] = test_df.apply(
         lambda x: combine_list(x.pts_x, x.pts_y), axis=1)
 
     train_df.pts = train_df.pts.apply(lambda x: correction(x))
@@ -57,7 +57,7 @@ def train():
 
     test_generator = DataGenerator(test_df,
                                    BATCH_SIZE*2,
-                                   path=os.path.join(PATH, TRAIN_FOLDER),
+                                   path=os.path.join(PATH, TEST_FOLDER),
                                    is_valid=True)
 
     # Initialize  Model

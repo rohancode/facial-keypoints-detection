@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import albumentations as albu
 from tensorflow.keras.utils import Sequence
+from sklearn.utils import shuffle
 from utils import load_image, combine_list
 
 seed = 42
@@ -19,16 +20,16 @@ class DataGenerator(Sequence):
         self.path = path
         self.input_size = input_size
         self.is_valid = is_valid
-        self.augment = albu.Compose([albu.HorizontalFlip(p=0.5),
-                                     albu.RandomBrightnessContrast(p=0.3),
-                                     albu.ShiftScaleRotate(shift_limit=0.05,
-                                                           scale_limit=0.1,
-                                                           rotate_limit=30, p=0.8)],
-                                    p=1, keypoint_params=albu.KeypointParams('xy'))
+        # self.augment = albu.Compose([albu.HorizontalFlip(p=0.5),
+        #                              albu.RandomBrightnessContrast(p=0.3),
+        #                              albu.ShiftScaleRotate(shift_limit=0.05,
+        #                                                    scale_limit=0.0,
+        #                                                    rotate_limit=30, p=0.8, always_apply=True)],
+        #                             p=1, keypoint_params=albu.KeypointParams('xy'))
 
     def __len__(self):
 
-        return np.ceil(self.df.shape[0] / self.bs).astype(int)
+        return np.floor(self.df.shape[0] / self.bs).astype(int)
 
     def on_epoch_end(self):
 
@@ -51,12 +52,13 @@ class DataGenerator(Sequence):
                 self.path, filename), self.input_size)
             points = [p * self.input_size for p in points_batch[i]]
             # Augmentation
-            if not self.is_valid:
-                points = list(zip(iter(points[0::2]), iter(points[1::2])))
-                transform = self.augment(image=image, keypoints=points)
-                image = transform['image']
-                points = np.array(transform['keypoints'])
-                points = combine_list(points[:, 0], points[:, 1])
+            # if not self.is_valid:
+            #     kps = np.empty((98, 2))
+            #     kps[:, 0], kps[:, 1] = points[0::2], points[1::2]
+            #     transform = self.augment(image=image, keypoints=kps)
+            #     image = transform['image']
+            #     points = np.array(transform["keypoints"])
+            #     points = np.reshape(points, -1)
 
             x_batch.append(image)
             y_batch.append(points)
