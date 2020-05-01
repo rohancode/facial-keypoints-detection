@@ -1,37 +1,47 @@
+import warnings
 import cv2
+import os
 import numpy as np
 from pathlib import Path
 from PIL import Image
-
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 
 np.random.seed(42)
 
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    warnings.warn("deprecated", DeprecationWarning)
 
-def plot_bbox_face(df, size=128, batch=1):
 
-    fig, axes = plt.subplots(1, 4, figsize=(20, 20))
-    index = batch * 4
-    for _, ax in enumerate(axes.flat):
-        im = np.array(Image.open(img_path / df.filename[index - 1]),
-                      dtype=np.uint8)
-        im = im / 255
-        im = cv2.resize(im, (size, size))
-        t = df[df.filename == df.filename[index - 1]]
-        t.reset_index(inplace=True)
-
-        for i in range(t.shape[0]):
-            ax.imshow(im)
-            for j in range(len(t.pts_x[i])):
-                cir = patches.Circle(
-                    (float(t.pts_x[i][j]) * size,
-                     float(t.pts_y[i][j]) * size), 0.7,
-                    color='red')
-                ax.add_patch(cir)
-        ax.text(-2, -3, 'File ID : ' + str(t.filename[0]),
-                withdash=True, color='black', fontsize=15)
-        index -= 1
+def plot_keypoint_df(df, path, size=128):
+    fig, axes = plt.subplots(2, 4, figsize=(20, 10))
+    axes = axes.flat
+    df = df.sample(8)
+    df.reset_index(inplace=True, drop=True)
+    for i in range(df.shape[0]):
+        img = load_image(os.path.join(path, df.newfile[i]), size)
+        axes[i].imshow(img)
+        for j in range(len(df.pts_x[i])):
+            cir = patches.Circle(
+                (float(df.pts_x[i][j]) * size,
+                 float(df.pts_y[i][j]) * size), 0.7,
+                color='red')
+            axes[i].add_patch(cir)
     plt.show()
+
+
+def plot_keypoint_img(images, labels, name=None):
+    fig, axes = plt.subplots(2, 4, figsize=(25, 10))
+    for i, ax in enumerate(axes.flat):
+        ax.imshow(images[i])
+        x = labels[i][0::2]
+        y = labels[i][1::2]
+        for j in range(98):
+            cir = patches.Circle((float(x[j]), float(y[j])), 0.5, color='red')
+            ax.add_patch(cir)
+    if name is not None:
+        fig.savefig(name)
 
 
 def plot_sample_img(data, dic, from_=0, to=16, figsize=(9, 6), n_i=4, n_j=4):
@@ -73,10 +83,10 @@ def open_image(fn):
             raise OSError('Error handling image at: {}'.format(fn)) from e
 
 
-def correct_pts(x):
-    x = [input_size - 0.001 if p >= input_size else p for p in x]
-    x = [0.0 if p <= 0.0 else p for p in x]
-    return x
+# def correct_pts(x):
+#     x = [input_size - 0.001 if p >= input_size else p for p in x]
+#     x = [0.0 if p <= 0.0 else p for p in x]
+#     return x
 
 
 def correction(x):

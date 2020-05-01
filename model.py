@@ -14,7 +14,7 @@ def KeypointModel(input_size=128, numclass=196):
 
     mobile_model = MobileNet(
         weights="imagenet",
-        alpha=0.25,
+        alpha=0.5,
         input_tensor=layers.Input(shape=(input_size, input_size, 3),
                                   name='feature'),
         include_top=False)
