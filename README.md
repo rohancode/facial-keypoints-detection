@@ -8,7 +8,7 @@ encoder-decoder CNN architectures, but those architectures large and slow for ed
 So I am trying to solve this problem by treating it as a regression problem on an open source dataset 
 i.e. directing predicting x and y coordinates of the keypoint by using MobilenetV1 (pretrained on ImageNet).
 
-When building deep learning models for mobile device especially for real-time use cases (fps >= 30 ) inference and
+When building deep learning models for mobile device especially for real-time use cases ( fps >= 30 ) inference and
 model size are the most important things to keep in mind.
 
 There are a few ways to increase inference time:
@@ -41,7 +41,7 @@ There are a few ways to increase inference time:
 </p>
 
 <p align="center">
-  <em>Predictionexmaples examples</em>
+  <em>Prediction examples</em>
 </p>
 
 <p align="center">
