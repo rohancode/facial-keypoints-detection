@@ -10,7 +10,7 @@ from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
 from generator import DataGenerator
 from model import KeypointModel
-from utils import combine_list, correction
+from utils import combine_list, correction, str_to_list
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -29,12 +29,6 @@ TEST_FOLDER = "test_images"
 WEIGHT_FILENAME = "face_keypoint_mobile.h5"
 INPUT_SIZE = 128
 BATCH_SIZE = 64
-
-
-def str_to_list(df):
-    df.pts_x = df.pts_x.apply(lambda x: ast.literal_eval(x))
-    df.pts_y = df.pts_y.apply(lambda x: ast.literal_eval(x))
-    return df
 
 
 def train():
@@ -83,12 +77,12 @@ def train():
 
     model.fit_generator(
         generator=train_generator,
-        steps_per_epoch=np.ceil(float(train_df.shape[0]) / float(BATCH_SIZE)),
+        steps_per_epoch=len(train_generator),
         epochs=50,
         verbose=1,
         callbacks=cbks,
         validation_data=test_generator,
-        validation_steps=np.ceil(float(test_df.shape[0]) / float(BATCH_SIZE)))
+        validation_steps=len(test_generator))
 
 
 if __name__ == "__main__":

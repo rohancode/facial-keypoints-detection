@@ -59,6 +59,12 @@ def combine_list(l1, l2):
     return l
 
 
+def str_to_list(df):
+    df.pts_x = df.pts_x.apply(lambda x: ast.literal_eval(x))
+    df.pts_y = df.pts_y.apply(lambda x: ast.literal_eval(x))
+    return df
+
+
 def load_image(path, input_size):
     img = cv2.imread(path)
     img = cv2.resize(img, (input_size, input_size))
