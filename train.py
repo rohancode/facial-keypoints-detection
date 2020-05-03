@@ -8,9 +8,9 @@ from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import LearningRateScheduler, EarlyStopping
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
 
-from generator import DataGenerator
-from model import KeypointModel
 from utils import combine_list, correction, str_to_list
+from model import KeypointModel
+from generator import DataGenerator
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -18,7 +18,8 @@ with warnings.catch_warnings():
 
 seed = 42
 np.random.seed(seed)
-tf.random.set_random_seed(seed)
+tf.random.set_seed(seed)
+
 
 PATH = "./data"
 TRAIN_CSV = "train.csv"

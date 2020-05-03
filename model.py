@@ -5,9 +5,11 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.applications import MobileNet
 from tensorflow.keras import initializers
 
+print(tf.__version__)
 
-np.random.seed(42)
-tf.random.set_random_seed(42)
+seed = 42
+np.random.seed(seed)
+tf.random.set_seed(seed)
 
 
 def KeypointModel(input_size=128, numclass=196):
