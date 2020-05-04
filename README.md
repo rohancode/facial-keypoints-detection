@@ -4,18 +4,18 @@
 
 Real time face keypoints detection for mobile devices using tflite on mobile gpus. Face keypoints detection is used in many applications like applying makeup, 
 instagram filters etc.Generally face keypoint or body keypoint detection are solved using hourglass or 
-encoder-decoder CNN architectures, but those architectures large and slow for edge cases.
+encoder-decoder CNN architectures, but those architectures large and slow for edge use cases.
 So I am trying to solve this problem by treating it as a regression problem on an open source dataset 
 i.e. directing predicting x and y coordinates of the keypoint by using MobilenetV1 (pretrained on ImageNet).
 
-When building deep learning models for mobile device especially for real-time use cases ( fps >= 30 ) inference and
+When building deep learning models for mobile device especially for real-time use cases ( fps >= 30 ), inference and
 model size are the most important things to keep in mind.
 
 There are a few ways to increase inference time:
    * Decrease input image size.
    * Use smaller networks like MobileNets.
    * If making custom models try to use as less layers as possible.
-      Decreasing depth of the model increase the inference more the decreasing the width of the model.
+      Decreasing depth of the model decreases the inference time more than decreasing the width of the model.
 
 ## Quick Start
   1. Download the dataset from [here](https://wywu.github.io/projects/LAB/LAB.html) and extract in `data` folder.
