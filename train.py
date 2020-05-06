@@ -53,11 +53,13 @@ def train():
 
     train_generator = DataGenerator(train_df,
                                     BATCH_SIZE,
+                                    input_size=INPUT_SIZE,
                                     path=os.path.join(PATH, TRAIN_FOLDER),
                                     is_valid=False)
 
     test_generator = DataGenerator(test_df,
                                    BATCH_SIZE*2,
+                                   input_size=INPUT_SIZE,
                                    path=os.path.join(PATH, TEST_FOLDER),
                                    is_valid=True)
 
