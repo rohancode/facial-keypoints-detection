@@ -51,3 +51,11 @@ There are a few ways to increase inference time:
 <p align="center">
   <em>Groud truth examples</em>
 </p>
+
+## Speed Profiling
+
+I have done speed profiling of this model on **Oneplus 7** using [tensorflow benchmark tool](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/tools/benchmark). You can see this model takes average of **4.1 ms** i.e it runs at **243 fps**.
+
+<p align="center">
+  <img src='media/profile.png' width="1000" height="400">
+</p>

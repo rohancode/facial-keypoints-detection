@@ -1,5 +1,6 @@
 import os
 import argparse
+import tensorflow.keras as k
 from tensorflow import lite
 
 
@@ -33,7 +34,8 @@ def parse_args():
 
 def convert_model(model_path, tflite_path):
 
-    converter = lite.TFLiteConverter.from_keras_model_file(model_path)
+    model = k.models.load_model(model_path, compile=False)
+    converter = lite.TFLiteConverter.from_keras_model(model)
     tflite_model = converter.convert()
     open(tflite_path, "wb").write(tflite_model)
 

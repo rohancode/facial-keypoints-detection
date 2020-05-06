@@ -3,6 +3,7 @@ import ast
 import os
 import pandas as pd
 import numpy as np
+import multiprocessing
 import tensorflow as tf
 from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import LearningRateScheduler, EarlyStopping
@@ -83,7 +84,9 @@ def train():
         verbose=1,
         callbacks=cbks,
         validation_data=test_generator,
-        validation_steps=len(test_generator))
+        validation_steps=len(test_generator),
+        shuffle=False,
+        workers=multiprocessing.cpu_count())
 
 
 if __name__ == "__main__":
