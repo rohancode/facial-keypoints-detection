@@ -59,3 +59,9 @@ I have done speed profiling of this model on **Oneplus 7** using [tensorflow ben
 <p align="center">
   <img src='media/profile.png' width="1000" height="400">
 </p>
+
+## Reference
+
+* [Real-time Facial Surface Geometry from Monocular Video on Mobile GPUs](https://sites.google.com/view/perception-cv4arvr/facemesh)
+
+* [Look at Boundary: A Boundary-Aware Face Alignment Algorithm](https://wywu.github.io/projects/LAB/LAB.html)
