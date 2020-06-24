@@ -146,12 +146,21 @@ def crop_save(row, path):
         b = (row[5]-img.shape[0])
     if img.shape[1] != row[5]:
         r = (row[5]-img.shape[1])
-    img = cv2.copyMakeBorder(img, t, b, l, r, cv2.BORDER_CONSTANT)
+
+    try:
+        img = cv2.copyMakeBorder(img, t, b, l, r, cv2.BORDER_CONSTANT)
+    else:
+        img
     cv2.imwrite(path+row[-1], img)
 
+
 landmark = make_landmark(True)
+
+print('Train landmark created')
 landmark = np.array(Parallel(n_jobs=6)(delayed(normalize)(i)
                                      for i in landmark.values))
+
+
 landmark = pd.DataFrame(data=landmark, columns=[
         'filename', 'bbox', 'x', 'y', 'height', 'width', 'hw', 'pts_x', 'pts_y'])
 
@@ -160,9 +169,13 @@ landmark['newfile'] = landmark.newfile.apply(lambda x: str(x)+'.jpg')
 
 _ = Parallel(n_jobs=6)(delayed(crop_save)(i, split_train_images_path)
                                for i in landmark.values)
+
+print('Train images saved')
 landmark.to_csv(split_train_landmark_new_path, index=False)
+print('Train landmark saved')
 
 landmark = make_landmark(False)
+print('Test landmark created')
 landmark = np.array(Parallel(n_jobs=6)(delayed(normalize)(i)
                                      for i in landmark.values))
 landmark = pd.DataFrame(data=landmark, columns=[
@@ -173,4 +186,7 @@ landmark['newfile'] = landmark.newfile.apply(lambda x: str(x)+'.jpg')
 
 _ = Parallel(n_jobs=6)(delayed(crop_save)(i, split_test_images_path)
                                for i in landmark.values)
+
+print('Test images saved')
 landmark.to_csv(split_test_landmark_new_path, index=False)
+print('Train landmark saved')
