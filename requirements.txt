@@ -1,4 +1,4 @@
-tensorflow-gpu==2.1.0
+tensorflow==2.1.0
 matplotlib
 Markdown==2.6.11
 numpy==1.18.2
